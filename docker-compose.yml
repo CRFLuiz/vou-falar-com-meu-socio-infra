@@ -1,0 +1,129 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./volumes/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./volumes/nginx/certs:/etc/letsencrypt:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    image: node:22-alpine
+    container_name: frontend
+    user: "1000:1000"
+    working_dir: /app
+    command: /bin/sh -c "yarn install && yarn dev"
+    volumes:
+      - ../vou-falar-com-meu-socio-frontend:/app
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health.json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  backend:
+    image: node:22-alpine
+    container_name: backend
+    user: "1000:1000"
+    working_dir: /app
+    command: /bin/sh -c "yarn install && yarn dev"
+    volumes:
+      - ../vou-falar-com-meu-socio-backend:/app
+    # Variáveis de ambiente removidas para usar .env interno via dotenv
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend-migration:
+        condition: service_completed_successfully
+    networks:
+      - app-network
+
+  backend-migration:
+    image: node:22-alpine
+    container_name: backend-migration
+    user: "1000:1000"
+    working_dir: /app
+    command: /bin/sh -c "yarn install && yarn migration:run"
+    volumes:
+      - ../vou-falar-com-meu-socio-backend:/app
+    # Variáveis de ambiente removidas para usar .env interno via dotenv
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=vou_falar_com_meu_socio
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - ./volumes/pgadmin:/var/lib/pgadmin
+    ports:
+      - "8080:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  infra-tools:
+    build: ./infra-tools
+    container_name: infra-tools
+    profiles:
+      - tools
+    volumes:
+      - ./infra-tools/entrypoint.sh:/app/entrypoint.sh
+      - ./scripts:/scripts
+      - ./volumes/nginx/certs:/etc/letsencrypt
+    environment:
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    command: ["./entrypoint.sh"]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

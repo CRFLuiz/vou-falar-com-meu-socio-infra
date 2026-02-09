@@ -1,0 +1,40 @@
+# Persistência de dados (ignorados por segurança e tamanho)
+volumes/postgres/
+volumes/pgadmin/
+volumes/redis/
+
+# Certificados e Chaves (Segurança - ignorar conteúdo, manter pasta se necessário com .gitkeep)
+volumes/nginx/certs/*
+!volumes/nginx/certs/.gitkeep
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+
+# Certificados e Chaves (Geral)
+*.pem
+*.key
+*.crt
+*.csr
+infra-tools/certs/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Terraform (se houver no futuro)
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Docker
+docker-compose.override.yml
