@@ -21,6 +21,11 @@
     *   **Frontend:** `https://vou-falar-com-meu-socio.lcdev.click`
     *   **Backend API:** `https://api.vou-falar-com-meu-socio.lcdev.click`
     *   **PgAdmin:** `http://localhost:8080`
+    > **Note:** If PgAdmin fails to start with "Permission denied" errors, fix volume permissions:
+    > ```bash
+    > sudo chown -R 5050:5050 ./volumes/pgadmin
+    > docker compose restart pgadmin
+    > ```
 
 ## Generating SSL Certificates
 The project includes a helper tool to generate Let's Encrypt certificates automatically using DNS-01 challenge (via Route53).
