@@ -20,7 +20,7 @@ services:
     container_name: frontend
     user: "1000:1000"
     working_dir: /app
-    command: /bin/sh -c "yarn install && yarn dev"
+    command: /bin/sh -c "yarn install && yarn build && yarn preview"
     volumes:
       - ../vou-falar-com-meu-socio-frontend:/app
     healthcheck:
