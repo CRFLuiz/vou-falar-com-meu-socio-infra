@@ -6,11 +6,8 @@
 
 ## Environment Setup
 1.  Navigate to `vou-falar-com-meu-socio-infra`.
-2.  Copy `.env.example` to `.env`:
-    ```bash
-    cp .env.example .env
-    ```
-3.  Ensure the `DOMAIN_NAME` variable in `.env` is set correctly (default: `vou-falar-com-meu-socio.lcdev.click`).
+2.  Optional: create a local `.env` file if you plan to use the `infra-tools` profile (SSL/DNS automation). This repository can be started without a `.env` file for day-to-day development.
+3.  If you created a `.env`, ensure the `DOMAIN_NAME` variable is set correctly (default: `vou-falar-com-meu-socio.lcdev.click`).
 
 ## Running the Application
 1.  Start the infrastructure:
@@ -41,4 +38,5 @@ The project includes a helper tool to generate Let's Encrypt certificates automa
 
 ## Development Notes
 *   **Hot Reload:** Frontend and Backend containers mount the source code volumes, so changes in `../vou-falar-com-meu-socio-frontend` or `../vou-falar-com-meu-socio-backend` are reflected immediately (HMR supported).
+*   **Dev vs Production Commands:** During development, the containers should use `yarn dev` for faster iteration. For production deployments, prefer `yarn build && yarn preview` to serve optimized assets.
 *   **Logs:** Use `docker compose logs -f [service_name]` to view logs.

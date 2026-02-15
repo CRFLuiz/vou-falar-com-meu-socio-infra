@@ -6,13 +6,14 @@ This document describes the changes made to improve the application's performanc
 ## Changes Implemented
 
 ### 1. Production Build in Docker
-- **Problem:** The application was running in development mode (`yarn dev`) in the production environment. This caused the browser to download hundreds of individual, unoptimized module files, leading to severe performance degradation.
-- **Solution:** Switched the `command` in `docker-compose.yml` to use `yarn build && yarn preview`.
+- **Problem (Production):** Running the frontend in development mode (`yarn dev`) in production causes the browser to download many unoptimized module files, which can severely degrade performance (LCP and overall load time).
+- **Solution (Production):** Use `yarn build && yarn preview` so the container serves bundled and optimized assets.
 - **Impact:** 
     - The application now serves optimized, minified, and bundled assets.
     - Significantly reduced the number of network requests.
     - Improved load times and LCP score.
 
 ## Technical Details
-- **Docker Compose Command:** `/bin/sh -c "yarn install && yarn build && yarn preview"`
-- **Environment:** The frontend container now acts as a preview server for the built artifacts rather than a hot-reloading development server.
+- **Production Docker Compose Command:** `/bin/sh -c "yarn install && yarn build && yarn preview"`
+- **Development Docker Compose Command:** `/bin/sh -c "yarn install && yarn dev"`
+- **Rationale:** `yarn dev` is faster and better for development workflows (HMR), while `build + preview` is the recommended option when deploying to production.
