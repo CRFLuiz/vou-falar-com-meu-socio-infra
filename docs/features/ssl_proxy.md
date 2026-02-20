@@ -7,6 +7,8 @@ The Nginx service acts as the main entry point and handles:
 3.  **Reverse Proxy:** Routes traffic to internal containers based on subdomains.
     *   `vou-falar-com-meu-socio.lcdev.click` -> `frontend:3000`
     *   `api.vou-falar-com-meu-socio.lcdev.click` -> `backend:3000`
+    *   `db-admin.vou-falar-com-meu-socio.lcdev.click` -> `pgadmin:80`
+    *   `litellm.vou-falar-com-meu-socio.lcdev.click` -> `litellm:4000`
 
 ## Health Checks
 Services are configured with Docker healthchecks to ensure reliability and correct startup order.
