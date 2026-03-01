@@ -56,6 +56,8 @@ services:
         condition: service_healthy
       backend-migration:
         condition: service_completed_successfully
+      redis:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -105,6 +107,34 @@ services:
       - "8080:80"
     depends_on:
       postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./volumes/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    ports:
+      - "5540:5540"
+    volumes:
+      - ./volumes/redis-insight:/data
+    depends_on:
+      redis:
         condition: service_healthy
     networks:
       - app-network
