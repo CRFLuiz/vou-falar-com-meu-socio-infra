@@ -2,6 +2,7 @@
 volumes/postgres/
 volumes/pgadmin/
 volumes/redis/
+volumes/redis-insight/
 
 # Certificados e Chaves (Segurança - ignorar conteúdo, manter pasta se necessário com .gitkeep)
 volumes/nginx/certs/*
