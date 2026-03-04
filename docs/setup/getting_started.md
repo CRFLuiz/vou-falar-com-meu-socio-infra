@@ -38,5 +38,8 @@ The project includes a helper tool to generate Let's Encrypt certificates automa
 
 ## Development Notes
 *   **Hot Reload:** Frontend and Backend containers mount the source code volumes, so changes in `../vou-falar-com-meu-socio-frontend` or `../vou-falar-com-meu-socio-backend` are reflected immediately (HMR supported).
+    *   If changes are not being detected inside containers (common with some host filesystems / VM setups), enable polling-based file watching for the frontend and backend services:
+        *   `CHOKIDAR_USEPOLLING=true`
+        *   `CHOKIDAR_INTERVAL=1000`
 *   **Dev vs Production Commands:** During development, the containers should use `yarn dev` for faster iteration. For production deployments, prefer `yarn build && yarn preview` to serve optimized assets.
 *   **Logs:** Use `docker compose logs -f [service_name]` to view logs.
