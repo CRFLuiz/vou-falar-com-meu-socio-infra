@@ -24,6 +24,9 @@ services:
     # command: /bin/sh -c "yarn install && yarn build && yarn preview"
     volumes:
       - ../vou-falar-com-meu-socio-frontend:/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health.json"]
       interval: 30s
@@ -44,6 +47,9 @@ services:
     command: /bin/sh -c "yarn install && yarn dev"
     volumes:
       - ../vou-falar-com-meu-socio-backend:/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
     # Variáveis de ambiente removidas para usar .env interno via dotenv
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
